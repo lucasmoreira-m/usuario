@@ -1,7 +1,7 @@
 package com.javanauta.usuario.infrastructure.security;
 
 
-import com.javanauta.usuario.infrastructure.entity.usuario;
+import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.repository.usuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +20,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Busca o usuário no banco de dados pelo e-mail
-        usuario usuario = usuarioRepository.findByEmail(email)
+        Usuario usuario = usuarioRepository.findByEmail(email)
+
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
         // Cria e retorna um objeto UserDetails com base no usuário encontrado
