@@ -6,10 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 @Service
 public class JwtUtil {
@@ -38,14 +35,16 @@ public class JwtUtil {
     // Extrai as claims do token JWT (informações adicionais do token)
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSigningKey()
                 .build()
                 .parseClaimsJws(token) // Analisa o token JWT e obtém as claims
                 .getBody(); // Retorna o corpo das claims
     }
 
     // Extrai o nome de usuário do token JWT
+
     public String extrairEmailToken(String token) {
+    
         // Obtém o assunto (nome de usuário) das claims do token
         return extractClaims(token).getSubject();
     }
@@ -60,6 +59,7 @@ public class JwtUtil {
     public boolean validateToken(String token, String username) {
         // Extrai o nome de usuário do token
         final String extractedUsername = extrairEmailToken(token);
+
         // Verifica se o nome de usuário do token corresponde ao fornecido e se o token não está expirado
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
