@@ -2,10 +2,7 @@ package com.javanauta.usuario.infrastructure.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,9 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name= "usuario")
+@Builder
 
 
- public class usuario implements UserDetails {
+
+ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,10 +31,10 @@ import java.util.List;
     private String senha;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name ="usuario_id",referencedColumnName = "id")
-    private List<Enderecos> enderecos;
+    private List<Endereco> enderecos;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name= "usuario_id", referencedColumnName = "id")
-    private List <telefone> telefones;
+    private List <Telefone> telefones;
 
 
     @Override
