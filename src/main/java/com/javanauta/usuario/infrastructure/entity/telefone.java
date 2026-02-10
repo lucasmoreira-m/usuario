@@ -1,19 +1,18 @@
 package com.javanauta.usuario.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
-    @Getter
+@Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Entity
-    @Table(name= "telefone")
-public  class telefone {
+    @Table(name= "Telefone")
+@Builder
+
+public  class Telefone {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +21,7 @@ public  class telefone {
         private String numero;
         @Column(name = "ddd", length = 3)
         private String ddd;
+        @Column(name= "usuario-id")
+        private Long usuario_id;
 
 }

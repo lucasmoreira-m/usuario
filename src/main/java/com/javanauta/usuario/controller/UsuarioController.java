@@ -4,10 +4,13 @@ import com.javanauta.usuario.business.DTO.EnderecoDTO;
 import com.javanauta.usuario.business.DTO.TelefoneDTO;
 import com.javanauta.usuario.business.DTO.UsuarioDTO;
 import com.javanauta.usuario.business.UsuarioService;
+import com.javanauta.usuario.business.ViaCepService;
+import com.javanauta.usuario.infrastructure.Clients.ViaCepDTO;
 import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +25,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final ViaCepService viaCepService;
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -77,6 +81,15 @@ public class UsuarioController {
     public ResponseEntity<TelefoneDTO> cadastroTelefone(@RequestBody TelefoneDTO dto,
                                                         @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.cadastroTelefone(token, dto));
+    }
+    @PostMapping("/endereco/{cep}")
+    public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable("cep") String cep){
+        return ResponseEntity.ok(ViaCepService.buscarDadosEndereco(cep));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public  ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }
