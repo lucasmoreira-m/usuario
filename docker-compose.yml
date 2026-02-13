@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    container_name: agendador-app
+    ports:
+      - "8081:8081"
+    environment:
+      # Configuração do Postgres (já existente)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/db_usuario
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      # Configuração do MongoDB (resolve o erro)
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/agendador_logs
+    depends_on:
+      - db
+      - mongo
+
+  db:
+    image: postgres:latest
+    container_name: agendador-db
+    environment:
+      POSTGRES_DB: db_usuario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+
+  mongo:
+    image: mongo:latest
+    container_name: agendador-mongo
+    ports:
+      - "27017:27017"

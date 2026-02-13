@@ -1,7 +1,10 @@
 package com.javanauta.usuario.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
@@ -10,10 +13,8 @@ import lombok.*;
     @NoArgsConstructor
     @Entity
     @Table(name= "Endereco")
-@Builder
 
-
-    public class Endereco {
+    public class Enderecos {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -28,9 +29,7 @@ import lombok.*;
         @Column (name = "estado", length = 2)
         private String estado;
         @Column(name= "cep", length = 9)
-        private String cep;
-        @Column(name= "usuario-id")
-        private Long usuario_id;
+        private String Cep;
 
 
 
