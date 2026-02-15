@@ -7,6 +7,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Service
 public class JwtUtil {
@@ -25,9 +27,9 @@ public class JwtUtil {
     // Gera um token JWT com o nome de usuário e validade de 1 hora
     public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(username) // Define o nome de usuário como o assunto do token
-                .setIssuedAt(new Date()) // Define a data e hora de emissão do token
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Define a data e hora de expiração (1 hora a partir da emissão)
+                .subject(username) // Define o nome de usuário como o assunto do token
+                .issuedAt(new Date()) // Define a data e hora de emissão do token
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Define a data e hora de expiração (1 hora a partir da emissão)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact(); // Constrói o token JWT
     }
@@ -35,10 +37,10 @@ public class JwtUtil {
     // Extrai as claims do token JWT (informações adicionais do token)
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey()
+                .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token) // Analisa o token JWT e obtém as claims
-                .getBody(); // Retorna o corpo das claims
+                .parseSignedClaims(token) // Analisa o token JWT e obtém as claims
+                .getPayload(); // Retorna o corpo das claims
     }
 
     // Extrai o nome de usuário do token JWT
