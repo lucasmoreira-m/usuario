@@ -128,6 +128,7 @@ public class UsuarioConverter {
                 .cep(dto.getCep()!= null ? dto.getCep():entity.getCep())
                 .complemento(dto.getComplemento()!= null ? dto.getComplemento(): entity.getComplemento())
                 .estado(dto.getEstado()!= null ?dto.getEstado():entity.getEstado())
+                .usuario_id(entity.getUsuario_id())
                 .build();
     }
 
