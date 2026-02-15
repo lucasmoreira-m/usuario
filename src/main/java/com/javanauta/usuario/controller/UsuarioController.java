@@ -13,13 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuario")
 @RequiredArgsConstructor
+
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -33,12 +32,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UsuarioDTO usuarioDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(),
-                        usuarioDTO.getSenha())
-        );
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO) {
+      return  ResponseEntity.ok(usuarioService.autenticarUsuario(usuarioDTO));
     }
 
     @GetMapping
@@ -84,7 +79,7 @@ public class UsuarioController {
     }
     @PostMapping("/endereco/{cep}")
     public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable("cep") String cep){
-        return ResponseEntity.ok(ViaCepService.buscarDadosEndereco(cep));
+        return ResponseEntity.ok(viaCepService.buscarDadosEndereco(cep));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -92,4 +87,7 @@ public class UsuarioController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
 }

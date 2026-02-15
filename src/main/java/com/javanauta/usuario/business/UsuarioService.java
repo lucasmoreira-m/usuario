@@ -8,15 +8,23 @@ import com.javanauta.usuario.infrastructure.entity.Endereco;
 import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.exceptions.ResourceNotFoundException;
+import com.javanauta.usuario.infrastructure.exceptions.UnauthorizedException;
 import com.javanauta.usuario.infrastructure.exceptions.conflictException;
 import com.javanauta.usuario.infrastructure.repository.TelefoneRepository;
 import com.javanauta.usuario.infrastructure.repository.enderecoRepository;
 import com.javanauta.usuario.infrastructure.repository.usuarioRepository;
 import com.javanauta.usuario.infrastructure.security.JwtUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+
 public class UsuarioService {
 
     private final usuarioRepository usuarioRepository;
@@ -25,6 +33,7 @@ public class UsuarioService {
     private final JwtUtil jwtUtil;
     private final enderecoRepository enderecoRepository;
     private final TelefoneRepository telefoneRepository;
+    private final AuthenticationManager authenticationManager;
 
     // CONSTRUTOR MANUAL PARA ADICIONAR O @LAZY
     public UsuarioService(usuarioRepository usuarioRepository,
@@ -32,13 +41,16 @@ public class UsuarioService {
                           @org.springframework.context.annotation.Lazy PasswordEncoder passwordEncoder,
                           JwtUtil jwtUtil,
                           enderecoRepository enderecoRepository,
-                          TelefoneRepository telefoneRepository) {
+                          TelefoneRepository telefoneRepository,
+                          AuthenticationManager authenticationManager)
+    {
         this.usuarioRepository = usuarioRepository;
         this.usuarioConverter = usuarioConverter;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.enderecoRepository = enderecoRepository;
         this.telefoneRepository = telefoneRepository;
+        this.authenticationManager = authenticationManager; // Inicializado aqui
     }
 
     // ... daqui para baixo os seus métodos (salvaUsuario, etc) continuam iguais
@@ -48,6 +60,22 @@ public class UsuarioService {
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.paraUsuario(usuarioDTO);
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public String autenticarUsuario(UsuarioDTO usuarioDTO){
+        try {
+
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(),
+                            usuarioDTO.getSenha())
+            );
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+
+        }catch (BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException e){
+            throw new UnauthorizedException("Usuário ou senha inválidos" , e.getCause());
+        }
+
     }
 
     public void emailExiste(String email) {

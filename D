@@ -1,0 +1,10 @@
+  develop[m
+  feature/api_via_cep[m
+  feature/atualizacoes[m
+  feature/cadastro_endreco_telefone[m
+  feature/cadastros_endereco_telefone[m
+* [32mfeature/refatoracao[m
+  feature/requisicoes[m
+  feature/salva_usuario[m
+  feature/spring_security[m
+  master[m
